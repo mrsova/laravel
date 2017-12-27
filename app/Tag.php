@@ -8,6 +8,10 @@ class Tag extends Model
 {
     use Sluggable;
 
+    /**
+     * Связьь с постами многие ко многим, у один тег может использоваться в разны х постах
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
     public function posts()
     {
         return $this->belongsToMany(
