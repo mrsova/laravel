@@ -111,6 +111,9 @@ return [
         ],
         'title'=>[
             'required'=> 'Заполни :attribute дурак'
+        ],
+        'name'=>[
+            'required' => 'Поле :attribute долэно быть заполнено'
         ]
     ],
     /*
@@ -130,7 +133,8 @@ return [
     |
     */
     'attributes'           => [
-        'title' => 'Название'
+        'title' => 'Название',
+        'name' => 'Имя'
     ],
 
 ];

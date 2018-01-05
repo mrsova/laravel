@@ -5,6 +5,7 @@ namespace App;
 use function bcrypt;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -21,7 +22,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email',
     ];
 
     /**
@@ -52,6 +53,19 @@ class User extends Authenticatable
     }
 
     /**
+     * Сгенерировать пароль пользователя
+     * @param $password
+     */
+    public function generatePassword($password)
+    {
+        if($password != null)
+        {
+            $this->password = bcrypt($password);
+            $this->save();
+        }
+    }
+
+    /**
      * Добавлние пользователя
      *
      * @param $fields
@@ -61,10 +75,10 @@ class User extends Authenticatable
     {
         $user = new static;
         $user->fill($fields);
-        $user->password = bcrypt($fields['password']);
         $user->save();
         return $user;
     }
+
 
     /**
      * Редактирование пользователя
@@ -74,7 +88,6 @@ class User extends Authenticatable
     public function edit($fields)
     {
         $this->fill($fields);
-        $this->password = bcrypt($fields['password']);
         $this->save();
     }
 
@@ -83,21 +96,33 @@ class User extends Authenticatable
      */
     public function remove()
     {
+        $this->removeAvatar();
         $this->delete();
     }
 
     /**
-     *
+     * Загрузить аваатар пользователя
      * @param string $imagesaf
-     */
+    */
     public function uploadAvatar($image)
     {
         if ($image == null){ return; }
-        Storage::delete('uploads/' . $this->image);
+        $this->removeAvatar();
         $filename = str_random(10) . '.' . $image->extension();
-        $image->saveAs('uploads', $filename);
-        $this->image = $filename;
+        $image->storeAs('uploads', $filename);
+        $this->avatar = $filename;
         $this->save();
+    }
+
+    /**
+     * Удалить аватарку пользователя
+     */
+    public function removeAvatar()
+    {
+        if($this->avatar != null)
+        {
+            Storage::delete('uploads/' . $this->avatar);
+        }
     }
 
     /**
@@ -106,11 +131,11 @@ class User extends Authenticatable
      */
     public function getImage()
     {
-        if($this->image == null)
+        if($this->avatar == null)
         {
             return '/img/no-user-image.png';
         }
-        return '/uploads/' . $this->image;
+        return '/uploads/' . $this->avatar;
     }
 
     /**
