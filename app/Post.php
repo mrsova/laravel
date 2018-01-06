@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
@@ -15,7 +16,7 @@ class Post extends Model
     const IS_FEATURED = 1;
     const IS_STANDART = 0;
 
-    protected $fillable = ['title', 'content'];
+    protected $fillable = ['title', 'content', 'date'];
 
     /**
      * Связь с категориями один к одному, у одного поста может быть только одна категория
@@ -46,8 +47,8 @@ class Post extends Model
             Tag::class,
             'post_tags',
             'post_id',
-            'tags_id'
-        );
+            'tag_id'
+        )->withTimestamps();
     }
 
     /**
@@ -96,7 +97,7 @@ class Post extends Model
     */
     public function remove()
     {
-        Storage::delete('uploads/' . $this->image);
+        $this->removeImage();
         $this->delete();
     }
 
@@ -107,13 +108,23 @@ class Post extends Model
     public function uploadImage($image)
     {
         if ($image == null){ return; }
-        Storage::delete('uploads/' . $this->image);
+        $this->removeImage();
         $filename = str_random(10) . '.' . $image->extension();
-        $image->saveAs('uploads', $filename);
+        $image->storeAs('uploads', $filename);
         $this->image = $filename;
         $this->save();
     }
 
+    /**
+     * Удалить картинку поста
+     */
+    public function removeImage()
+    {
+        if($this->image != null)
+        {
+            Storage::delete('uploads/' . $this->image);
+        }
+    }
     /**
      * Получить картинку
      * @return string
@@ -215,6 +226,11 @@ class Post extends Model
         }
     }
 
+    public function setDateAttribute($value)
+    {
+        $date = Carbon::createFromFormat('d/m/y', $value)->format('Y-m-d');
+        $this->attributes['date'] = $date;
+    }
 }
 
 
