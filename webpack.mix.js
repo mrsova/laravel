@@ -43,7 +43,7 @@ mix.copy('resources/assets/admin/dist/fonts', 'public/fonts');
 mix.copy('resources/assets/admin/dist/img', 'public/img');
 mix.copy('resources/assets/admin/plugins/iCheck/minimal/blue.png', 'public/css');
 
-/*
+
 mix.styles([
     'resources/assets/front/css/bootstrap.min.css',
     'resources/assets/front/css/font-awesome.min.css',
@@ -66,4 +66,3 @@ mix.scripts([
 
 mix.copy('resources/assets/front/fonts', 'public/fonts');
 mix.copy('resources/assets/front/images', 'public/images');
-*/

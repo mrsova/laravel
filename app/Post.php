@@ -7,33 +7,37 @@ use Cviebrock\EloquentSluggable\Sluggable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * Class Post
+ * @package App
+ */
 class Post extends Model
 {
     use Sluggable;
 
-    const IS_DRAFT = 0;
-    const IS_PUBLIC = 1;
+    const IS_DRAFT = 1;
+    const IS_PUBLIC = 0;
     const IS_FEATURED = 1;
     const IS_STANDART = 0;
 
-    protected $fillable = ['title', 'content', 'date'];
+    protected $fillable = ['title', 'content', 'description', 'date'];
 
     /**
-     * Связь с категориями один к одному, у одного поста может быть только одна категория
+     * Связь с категориями, принадлежит к одной категории, а категория пренадлежит к множетву постов
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function category()
     {
-        return $this->hasOne(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     /**
-     * Связь с пользователями один к одному, у одного поста может быть только один автор
+     * Связь с пользователями, принадлежит к одному автору
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function author()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -143,7 +147,7 @@ class Post extends Model
      */
     public function setCategory($id)
     {
-        if ($id == null) { return ;}
+        if ($id == null) {return;}
         $this->category_id = $id;
         $this->save();
     }
@@ -182,7 +186,7 @@ class Post extends Model
      */
     public function toggleStatus($value)
     {
-        if($value == null)
+        if(!$value == null)
         {
            return $this->setDraft();
         }
@@ -226,10 +230,47 @@ class Post extends Model
         }
     }
 
+    /**
+     * Сет метод меняем формат даты при записи в базу
+     * @param $value
+     */
     public function setDateAttribute($value)
     {
         $date = Carbon::createFromFormat('d/m/y', $value)->format('Y-m-d');
         $this->attributes['date'] = $date;
+    }
+
+    /**
+     * get метод меняем формат при выводе из базы
+     * @param $value
+    */
+    public function getDateAttribute($value)
+    {
+        $date = Carbon::createFromFormat('Y-m-d', $value)->format('d/m/y');
+        return $date;
+    }
+
+    /**
+     * Получить категорию поста
+     * @return string
+     */
+    public function getCategoryTitle()
+    {
+        return ($this->category != null) ? $this->category->title : 'Нет категории';
+    }
+
+    /**
+     * Получить теги связанные с постом
+     * @return string
+     */
+    public function getTagsTitles()
+    {
+        return (!$this->tags->isEmpty()) ? implode(', ', $this->tags->pluck('title')->all()) : 'Теги не установлены';
+    }
+
+    public function getCategoryID()
+    {
+        return ($this->category != null) ? $this->category->id : 0;
     }
 }
 

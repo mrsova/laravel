@@ -40,7 +40,7 @@
               <label>Категория</label>
               {{Form::select('category_id', 
               	$categories, 
-              	null, 
+              	0,
               	['class' => 'form-control select2'])
               }}
             </div>

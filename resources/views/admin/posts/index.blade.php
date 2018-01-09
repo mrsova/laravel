@@ -44,8 +44,8 @@
                   <tr>
                     <td>{{$post->id}}</td>
                     <td>{{$post->title}}</td>
-                    <td>23</td>
-                    <td>12</td>
+                    <td>{{$post->getCategoryTitle()}}</td>
+                    <td>{{$post->getTagsTitles()}}</td>
                     <td>
                       <img src="{{$post->getImage()}}" alt="" width="100">
                     </td>
