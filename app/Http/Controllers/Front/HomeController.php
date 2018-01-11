@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Front;
 
+use App\Category;
+use App\Tag;
 use function compact;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Post;
+use function view;
 
 class HomeController extends Controller
 {
@@ -17,28 +20,11 @@ class HomeController extends Controller
     public function index()
     {
         $posts = Post::paginate(2);
-        return view('front.index', compact('posts'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+        $popularPosts = Post::orderBy('views', 'desc')->take(3)->get();
+        $featuredPosts = Post::where('is_featured', 1)->take(3)->get();
+        $recentPosts = Post::orderBy('date', 'desc')->take(4)->get();
+        $categories = Category::all();
+        return view('front.index', compact('posts','popularPosts','featuredPosts','recentPosts','categories'));
     }
 
     /**
@@ -47,42 +33,34 @@ class HomeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        //
+        $post = Post::where('slug', $slug)->firstOrFail();
+        return view('front.show', compact('post'));
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Получить страницу с постами по тегу
+     * @param $slug
      */
-    public function edit($id)
+    public function tag($slug)
     {
-        //
+        $tag = Tag::where('slug', $slug)->firstOrFail();
+        $posts = $tag->posts()->paginate(2);
+
+        return view('front.list', compact('posts'));
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * Получить страницу с постами по категории
+     * @param $slug
      */
-    public function update(Request $request, $id)
+    public function category($slug)
     {
-        //
+        $category = Category::where('slug', $slug)->firstOrFail();
+        $posts = $category->posts()->paginate(2);
+
+        return view('front.list', compact('posts'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }

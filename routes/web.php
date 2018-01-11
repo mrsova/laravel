@@ -13,6 +13,9 @@
 
 Route::group(['namespace'=>'Front'], function(){
     Route::get('/', 'HomeController@index');
+    Route::get('/post/{slug}', 'HomeController@show')->name('post.show');
+    Route::get('/tag/{slug}', 'HomeController@tag')->name('tag.show');
+    Route::get('/category/{slug}', 'HomeController@category')->name('category.show');
 });
 
 
@@ -26,4 +29,3 @@ Route::group(['prefix'=>'admin', 'namespace'=>'Admin'], function(){
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');

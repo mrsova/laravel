@@ -250,6 +250,12 @@ class Post extends Model
         return $date;
     }
 
+    public function getDate()
+    {
+        return Carbon::createFromFormat('d/m/y', $this->date)->format('F d,Y');
+
+    }
+
     /**
      * Получить категорию поста
      * @return string
@@ -268,9 +274,72 @@ class Post extends Model
         return (!$this->tags->isEmpty()) ? implode(', ', $this->tags->pluck('title')->all()) : 'Теги не установлены';
     }
 
+    /**
+     * Получить id категории
+     * @return int
+     */
     public function getCategoryID()
     {
         return ($this->category != null) ? $this->category->id : 0;
+    }
+
+    /**
+     * Существование предыдущего поста
+     * выбираем айдишники которые меньше текущего и выбираем из них максимальный
+     */
+    public function hasPrevious()
+    {
+        return self::where('id', '<', $this->id)->max('id');
+    }
+
+    /**
+     * Существование следующего поста
+     * выбираем айдишники которые больше текущего и выбираем из них Минимальный
+     */
+    public function hasNext()
+    {
+        return self::where('id', '>', $this->id)->min('id');
+    }
+
+    /**
+     * выбираем предыдущий пост
+     */
+    public function getPrevious()
+    {
+        $postID = $this->hasPrevious(); //ID
+        return self::find($postID);
+    }
+
+    /**
+     * выбираем слудующий пост
+     */
+    public function getNext()
+    {
+        $postID = $this->hasNext(); //ID
+        return self::find($postID);
+    }
+
+    /**
+     * Вывести посты из этой же категории
+     */
+    public function related()
+    {
+        return self::all()->except($this->id);
+    }
+
+    public function hasCategory()
+    {
+        return $this->category != null ? true : false;
+    }
+
+    public static function getPopularPosts()
+    {
+        return self::orderBy('views','desc')->take(3)->get();
+    }
+
+    public function getComments()
+    {
+        return $this->comments()->where('status', 1)->get();
     }
 }
 
