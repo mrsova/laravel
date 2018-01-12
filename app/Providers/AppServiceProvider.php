@@ -3,7 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
+use App\Post;
+use App\Category;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -13,7 +14,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        //появляется до рендеринга вызываем  метод и вьюху в коротру данные передаем в колбеке запросы и переменные которые передаем
+        view()->composer('front._sidebar', function($view){
+            $view->with('popularPosts', Post::getPopularPosts());
+            $view->with('featuredPosts', Post::getFeaturedPosts());
+            $view->with('recentPosts', Post::getRecentPosts());
+            $view->with('categories', Category::all());
+        });
     }
 
     /**

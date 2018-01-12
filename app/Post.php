@@ -327,15 +327,42 @@ class Post extends Model
         return self::all()->except($this->id);
     }
 
+    /**
+     * Проверяет существование категории у поста
+     * @return bool
+     */
     public function hasCategory()
     {
         return $this->category != null ? true : false;
     }
 
+    /**
+     * Получить популярные посты
+     * @return mixed
+     */
     public static function getPopularPosts()
     {
         return self::orderBy('views','desc')->take(3)->get();
     }
+
+    /**
+     * Получитиь рекомендованные посты
+     * @return mixed
+     */
+    public static function getFeaturedPosts()
+    {
+        return self::where('is_featured', 1)->take(3)->get();
+    }
+
+    /**
+     * Получитиь последние посты
+     * @return mixed
+     */
+    public static function getRecentPosts()
+    {
+        return self::orderBy('date', 'desc')->take(4)->get();
+    }
+
 
     public function getComments()
     {
