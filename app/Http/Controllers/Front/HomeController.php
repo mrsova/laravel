@@ -8,6 +8,7 @@ use function compact;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Post;
+use Illuminate\Support\Facades\Auth;
 use function view;
 
 class HomeController extends Controller

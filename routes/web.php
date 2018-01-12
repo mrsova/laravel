@@ -16,10 +16,24 @@ Route::group(['namespace'=>'Front'], function(){
     Route::get('/post/{slug}', 'HomeController@show')->name('post.show');
     Route::get('/tag/{slug}', 'HomeController@tag')->name('tag.show');
     Route::get('/category/{slug}', 'HomeController@category')->name('category.show');
+    //Если пользователь авторизован то разрешаем маршрут
+    Route::group(['middleware' => 'auth'], function() {
+        Route::get('/logout', 'AuthController@logout');
+        Route::get('/profile', 'ProfileController@index');
+        Route::post('/profile', 'ProfileController@store');
+    });
+
+    //Если не авторизован то разрешаем такие маршруты вся фишка в middleware class RedirectIfAutentificated
+    Route::group(['middleware' => 'guest'], function() {
+        Route::get('/register', 'AuthController@registerForm');
+        Route::post('/register', 'AuthController@register');
+        Route::get('/login', 'AuthController@loginForm')->name('login');
+        Route::post('/login', 'AuthController@login');
+    });
 });
 
 
-Route::group(['prefix'=>'admin', 'namespace'=>'Admin'], function(){
+Route::group(['prefix'=>'admin', 'namespace'=>'Admin','middleware' => 'admin'], function(){
     Route::get('/', 'DashboardController@index');
     Route::resource('/categories', 'CategoriesController');
     Route::resource('/tags', 'TagsController');
@@ -27,5 +41,4 @@ Route::group(['prefix'=>'admin', 'namespace'=>'Admin'], function(){
     Route::resource('/posts', 'PostsController');
 });
 
-Auth::routes();
 
