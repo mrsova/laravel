@@ -21,6 +21,7 @@ Route::group(['namespace'=>'Front'], function(){
         Route::get('/logout', 'AuthController@logout');
         Route::get('/profile', 'ProfileController@index');
         Route::post('/profile', 'ProfileController@store');
+        Route::post('/comment', 'CommentsController@store');
     });
 
     //Если не авторизован то разрешаем такие маршруты вся фишка в middleware class RedirectIfAutentificated
@@ -39,6 +40,10 @@ Route::group(['prefix'=>'admin', 'namespace'=>'Admin','middleware' => 'admin'], 
     Route::resource('/tags', 'TagsController');
     Route::resource('/users', 'UsersController');
     Route::resource('/posts', 'PostsController');
+    Route::get('/comments', 'CommentsController@index')->name('comments.index');
+    Route::delete('/comments/{id}/destroy', 'CommentsController@destroy')->name('comments.destroy');
+    Route::get('/comments/toggle/{id}', 'CommentsController@toggle');
+
 });
 
 

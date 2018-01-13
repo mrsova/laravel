@@ -10,25 +10,25 @@ class Comments extends Model
     const DISALLOW = 0;
 
     /**
-     * Связь с постом, один комментарий может быть только у одного поста
+     * один комментарий может быть только у одного поста , а у поста множество комментариев
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function post()
     {
-        return $this->hasOne(Post::class);
+        return $this->belongsTo(Post::class);
     }
 
     /**
-     * Связь с автором у одного пкомментария может быть только один автор
+     * Связь с автором у одного пкомментария может быть только один автор. а автор может оставлять множество комментариев
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     public function author()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
-     * HРазрешить комментарий
+     * Разрешить комментарий
      */
     public function allow()
     {
@@ -50,7 +50,7 @@ class Comments extends Model
      */
     public function toggleStatus()
     {
-        if($this->status = Comments::DISALLOW)
+        if($this->status == Comments::DISALLOW)
         {
             return $this->allow();
         }

@@ -55,6 +55,11 @@ class Post extends Model
         )->withTimestamps();
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comments::class, 'post_id');
+    }
+
     /**
      * Return the sluggable configuration array for this model.
      *
@@ -363,7 +368,10 @@ class Post extends Model
         return self::orderBy('date', 'desc')->take(4)->get();
     }
 
-
+    /**
+     * Получить комментарии
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function getComments()
     {
         return $this->comments()->where('status', 1)->get();
