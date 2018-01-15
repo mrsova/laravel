@@ -16,6 +16,8 @@ Route::group(['namespace'=>'Front'], function(){
     Route::get('/post/{slug}', 'HomeController@show')->name('post.show');
     Route::get('/tag/{slug}', 'HomeController@tag')->name('tag.show');
     Route::get('/category/{slug}', 'HomeController@category')->name('category.show');
+    Route::post('/subscribe', 'SubsController@subscribe')->name('subscribe');
+    Route::get('/verification/{token}', 'SubsController@verification')->name('verification');
     //Если пользователь авторизован то разрешаем маршрут
     Route::group(['middleware' => 'auth'], function() {
         Route::get('/logout', 'AuthController@logout');
@@ -43,6 +45,8 @@ Route::group(['prefix'=>'admin', 'namespace'=>'Admin','middleware' => 'admin'], 
     Route::get('/comments', 'CommentsController@index')->name('comments.index');
     Route::delete('/comments/{id}/destroy', 'CommentsController@destroy')->name('comments.destroy');
     Route::get('/comments/toggle/{id}', 'CommentsController@toggle');
+    Route::get('/comments/toggle/{id}', 'CommentsController@toggle');
+    Route::resource('/subscribers', 'SubsController');
 
 });
 

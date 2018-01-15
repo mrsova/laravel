@@ -6,11 +6,6 @@
     <div class="container">
         <div class="row">
             <div class="col-md-8">
-                @if(session('status'))
-                    <div class="alert-success alert">
-                        {{session('status')}}
-                    </div>
-                @endif
                 <article class="post">
                     <div class="post-thumb">
                         <a href="{{route('post.show', $post->slug)}}"><img src="{{$post->getImage()}}" alt=""></a>
@@ -107,7 +102,7 @@
                         <div class="comment-text">
                             <h5>{{$comment->author->name}}</h5>
                             <p class="comment-date">
-                                {{LocalizedCarbon::instance($comment->created_at)->diffForHumans() }}
+                                {{$comment->created_at->diffForHumans() }}
                             </p>
                             <p class="para">{{$comment->text}}</p>
                         </div>
