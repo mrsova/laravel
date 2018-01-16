@@ -114,7 +114,12 @@ class PostsController extends Controller
      */
     public function destroy($id)
     {
-        Post::find($id)->remove();
+        $post = Post::find($id);
+        //Удалить строки из связной таблицы
+        $ids = $post->tags->pluck('id')->all();
+        $post->tags()->detach($ids);
+        //Удалить сам пост
+        $post->remove();
         return redirect()->route('posts.index');
     }
 }
